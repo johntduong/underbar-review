@@ -163,16 +163,14 @@
   _.reduce = function(collection, iterator, accumulator) {
     var result;
     var counter = 0;
-    if (accumulator !== null) {
+    if (accumulator != null) {
       result = accumulator;
     } else {
       result = collection[0];
       counter++;
     }
     for (counter; counter < collection.length; counter++) {
-      _.each(collection, function(element) {
-        result = iterator(collection[counter], result);
-      });
+      result = iterator(result, collection[counter]);
     }
 
     return result;
