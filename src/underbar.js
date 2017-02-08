@@ -225,7 +225,8 @@
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
 
-  // _.some([1,2,3], isOdd);
+  // _.some([2,1,6], isEven);
+
   // _.every([2,4,6], isOdd)
 
   _.some = function(collection, iterator2) {
@@ -233,9 +234,19 @@
     
     // If result in _.every is true at anytime, jump out of _.every and return true
 
-    return !_.every(collection, function(element) {
-      if (!iterator2(element)) {
+    //if undefined, iterator2 (callback) is set to _.identity function
+    //else it remains the function we passed it in as
+    iterator2 = iterator2 || _.identity;
+
+    //on each item in the collection, we will call an anonymous function
+    //the anonymous function will run iterator2 on each item in the collection
+    //if the result is true, it will return false to _.reduce inside _.every
+    //the _.reduce will change false to true
+    return !_.every(collection, function(item) {
+      if (iterator2(item)) {
         return false;
+      } else {
+        return true;
       }
     });
   };
@@ -260,11 +271,27 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    var result = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        result[key] = arguments[i][key];
+      }
+    }
+    return result;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var result = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (result[key] === undefined) {
+          result[key] = arguments[i][key];
+        }
+      }
+    }
+    return result;
   };
 
 
@@ -308,6 +335,22 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+
+    var result = {};
+
+    //{}
+
+    var funcWithArg = JSON.stringify(func.apply(this, arguments));
+    
+    return function() {
+      
+
+      if (!result.hasOwnProperty(funcWithArg)) {
+        result[funcWithArg] = func.apply(this, arguments);
+      }
+      return result[funcWithArg];
+    };
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
