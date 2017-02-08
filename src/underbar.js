@@ -200,23 +200,44 @@
 
 
   // Determine whether all of the elements match a truth test.
+  // ****** refactor if time allows
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    iterator = iterator || _.identity;
 
-    return _.reduce(collection, function(accumulated, currentItem) {
-      if (!iterator(accumulated && currentItem)) {
-        return false;
-      } else {
-        return true;
-      }
-    }, true);
+    var result = true;
+
+    // ignore "string" in argument[2] and accumulated - these are just empty placeholders
+    // we are simply trying to iterate through all items in collection and check against
+    // iterator function below
+    _.reduce(collection, function(accumulated, currentItem) {
+      if (!iterator(currentItem)) {
+        result = false;
+      } 
+      return accumulated;
+
+    }, 'string');
+
+    return result;
     
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
-  _.some = function(collection, iterator) {
+
+  // _.some([1,2,3], isOdd);
+  // _.every([2,4,6], isOdd)
+
+  _.some = function(collection, iterator2) {
     // TIP: There's a very clever way to re-use every() here.
+    
+    // If result in _.every is true at anytime, jump out of _.every and return true
+
+    return !_.every(collection, function(element) {
+      if (!iterator2(element)) {
+        return false;
+      }
+    });
   };
 
 
