@@ -335,32 +335,23 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
-
-    var result = {};
-
-    //{}
-
-    var funcWithArg = JSON.stringify(func.apply(this, arguments));
-    
-    return function() {
-      
-
-      if (!result.hasOwnProperty(funcWithArg)) {
-        result[funcWithArg] = func.apply(this, arguments);
-      }
-      return result[funcWithArg];
+      var result = {};
+      return function() {
+  			var argString = JSON.stringify(arguments);
+      	if (!result.hasOwnProperty(argString)) {
+        	result[argString] = func.apply(this, [].slice.call(arguments)); 
+        }
+        return result[argString];
+      };
     };
-
-  };
-
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  //
-  // The arguments for the original function are passed after the wait
-  // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
-  // call someFunction('a', 'b') after 500ms
-  _.delay = function(func, wait) {
-  };
+	
+	
+	_.delay = function(func, wait) {
+		var args = [].slice.call(arguments);
+		window.setTimeout(function(){
+			func.apply(this, args.slice(2))
+		},wait);
+	};
 
 
   /**
@@ -373,8 +364,20 @@
   // TIP: This function's test suite will ask that you not modify the original
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
+  var randomUpTo = function(n) {
+  	return Math.floor(Math.random() * n);
+  }
+  
   _.shuffle = function(array) {
-  };
+  	var copy = array.slice()
+  	var result = [];
+    while (copy.length > 0) {
+     var index = randomUpTo(copy.length);
+     result.push(array[index]);
+     copy.splice(index,1);
+    }
+    return result;
+   };
 
 
   /**
